@@ -1,4 +1,12 @@
 ---
+- name: Create ansible.log
+  file:
+    path: /var/log/ansible.log
+    state: touch
+    modification_time: preserve
+    access_time: preserve
+    mode: '0644'
+
 - name: Install buster-backports
   apt_repository: repo="deb http://ftp.debian.org/debian buster-backports main"
   when: ansible_distribution == 'Debian' and ansible_distribution_major_version == '10'
@@ -13,3 +21,15 @@
 - name: Install pip packages for Megaphone Ansible
   pip:
     name: linode_api4
+
+- name: Install ansible.cfg
+  copy: 
+    src: files/ansible.cfg
+    dest: "{{ playbook_dir }}/ansible.cfg"
+    mode: '0644'
+
+- name: Install gethosts.cfg.php
+  copy: 
+    src: files/gethosts.cfg.php
+    dest: "{{ playbook_dir }}/gethosts.cfg.php"
+    mode: '0644'
