@@ -6,6 +6,8 @@
     modification_time: preserve
     access_time: preserve
     mode: '0644'
+    owner: "{{ansible_user}}"
+    group: "{{ansible_user}}"
 
 - name: Install buster-backports
   apt_repository: repo="deb http://ftp.debian.org/debian buster-backports main"
