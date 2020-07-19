@@ -26,12 +26,16 @@
   copy: 
     src: files/ansible.cfg
     dest: "{{ playbook_dir }}/ansible.cfg"
-    mode: '0666'
+    mode: '0644'
+    owner: "{{ansible_user}}"
+    group: "{{ansible_user}}"
 
 - name: Install gethosts.cfg.php
   copy: 
     src: files/gethosts.cfg.php
     dest: "{{ playbook_dir }}/gethosts.cfg.php"
     mode: '0644'
+    owner: "{{ansible_user}}"
+    group: "{{ansible_user}}"
 
 # TODO: Create authorized_keys
