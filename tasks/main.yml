@@ -67,4 +67,8 @@
     repo: "ssh://git@git.megaphonetech.com:10022/megaphone/passwords.git"
     dest: ~/.password-store
   become: no
-# TODO: Create authorized_keys
+
+- name: Create authorized_keys on root
+  authorized_key:
+    user: root
+    key: "{{ ansible_env.HOME }}/.ssh/id_rsa.pub"
