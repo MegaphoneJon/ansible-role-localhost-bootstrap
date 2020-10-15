@@ -50,6 +50,9 @@
     owner: "{{ansible_user}}"
     group: "{{ansible_user}}"
 
+- name: Install community Ansible modules
+  command: ansible-galaxy collection install community.general
+
 - name: Add gitea keys to local user known_hosts
   known_hosts:
     name: "[git.megaphonetech.com]:10022"
@@ -68,7 +71,13 @@
     dest: ~/.password-store
   become: no
 
+- name: get the current user's home directory (for next step)
+  set_fact:
+    my_home_dir: "{{ lookup('env','HOME') }}"
+  become: true
+  become_user: "{{ ansible_env.SUDO_USER }}"
+
 - name: Create authorized_keys on root
-  authorized_key:
+  ansible.posix.authorized_key:
     user: root
-    key: "{{ ansible_env.HOME }}/.ssh/id_rsa.pub"
+    key: "{{ lookup('file', '{{ my_home_dir }}/.ssh/id_rsa.pub') }}"
