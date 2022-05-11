@@ -6,8 +6,8 @@
     modification_time: preserve
     access_time: preserve
     mode: '0644'
-    owner: "{{ansible_user}}"
-    group: "{{ansible_user}}"
+    owner: "{{ lookup('env','USER') }}"
+    group: "{{ lookup('env','USER') }}"
 
 - name: Install buster-backports
   apt_repository: repo="deb http://ftp.debian.org/debian buster-backports main"
@@ -24,7 +24,7 @@
 
 - name: Install necessary Ansible packages
   apt:
-    name: ['ansible', 'pass', 'expect', 'python3-pip', "php{{ php_version }}-cli", "php{{ php_version }}-curl", "python3-lxml"]
+    name: ['ansible', 'pass', 'expect', 'python3-pip', "php-cli", "php-curl", "python3-lxml"]
     # 86400 seconds = 24 hours
     cache_valid_time: 86400
 
@@ -65,12 +65,6 @@
     - "[git.megaphonetech.com]:10022 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJoN1UsqLqucSJo4dSum6Xy2qCrlutDAu3wPdprAL4w"
   become: no
 
-- name: Download the password database
-  git:
-    repo: "ssh://git@git.megaphonetech.com:10022/megaphone/passwords.git"
-    dest: ~/.password-store
-  become: no
-
 - name: get the current user's home directory (for next step)
   set_fact:
     my_home_dir: "{{ lookup('env','HOME') }}"
@@ -81,3 +75,24 @@
   ansible.posix.authorized_key:
     user: root
     key: "{{ lookup('file', '{{ my_home_dir }}/.ssh/id_rsa.pub') }}"
+
+- name: Download the password database
+  git:
+    repo: "ssh://git@git.megaphonetech.com:10022/megaphone/passwords.git"
+    dest: ~/.password-store
+  become: no
+
+- name: Add Ansible user to sudo
+  lineinfile:
+    dest: /etc/sudoers
+    state: present
+    regexp: "^{{ ansible_user }}"
+    line: "{{ ansible_user }} ALL=(ALL) NOPASSWD: ALL"
+    validate: 'visudo -cf %s'
+
+- name: Add authorized keys to Ansible user
+  connection: ssh
+  authorized_key:
+    user: "{{ lookup('env','USER') }}"
+    key: "https://ssh.megaphonetech.com/{{ lookup('env','USER') }}_id_rsa.pub"
+  become: yes
