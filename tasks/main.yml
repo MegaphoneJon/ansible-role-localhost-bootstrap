@@ -1,4 +1,8 @@
 ---
+- name: Create Ansible user
+  user:
+    name: ansible
+
 - name: Create ansible.log
   file:
     path: /var/log/ansible.log
