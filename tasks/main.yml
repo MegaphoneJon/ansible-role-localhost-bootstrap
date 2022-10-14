@@ -88,8 +88,9 @@
 
 - name: Add Ansible user to sudo
   lineinfile:
-    dest: /etc/sudoers
+    dest: /etc/sudoers.d/ansible
     state: present
+    create: yes
     regexp: "^{{ ansible_user }}"
     line: "{{ ansible_user }} ALL=(ALL) NOPASSWD: ALL"
     validate: 'visudo -cf %s'
