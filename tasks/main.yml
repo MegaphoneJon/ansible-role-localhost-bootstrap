@@ -96,7 +96,6 @@
     validate: 'visudo -cf %s'
 
 - name: Add authorized keys to Ansible user
-  connection: ssh
   authorized_key:
     user: "{{ lookup('env','USER') }}"
     key: "https://ssh.megaphonetech.com/{{ lookup('env','USER') }}_id_rsa.pub"
