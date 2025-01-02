@@ -28,15 +28,15 @@
 
 - name: Install necessary Ansible packages
   apt:
-    name: ['ansible', 'pass', 'expect', 'python3-pip', "php-cli", "php-curl", "python3-lxml"]
+    name: ['ansible', 'pass', 'expect', 'python3-pip', "php-cli", "php-curl", "python3-lxml", "python3-pymysql"]
     # 86400 seconds = 24 hours
     cache_valid_time: 86400
 
-- name: Install pip packages for Megaphone Ansible
-  pip:
-    name: 
-      - linode_api4
-      - PyMySql
+#- name: Install pip packages for Megaphone Ansible
+#  pip:
+#    name: 
+#      - linode_api4
+#      - PyMySql
 
 - name: Install ansible.cfg
   copy: 
@@ -78,7 +78,7 @@
 - name: Create authorized_keys on root
   ansible.posix.authorized_key:
     user: root
-    key: "{{ lookup('file', '{{ my_home_dir }}/.ssh/id_rsa.pub') }}"
+    key: "{{ lookup('file', '{{ my_home_dir }}/.ssh/id_ed25519.pub') }}"
 
 - name: Download the password database
   git:
@@ -98,5 +98,5 @@
 - name: Add authorized keys to Ansible user
   authorized_key:
     user: "{{ lookup('env','USER') }}"
-    key: "https://ssh.megaphonetech.com/{{ lookup('env','USER') }}_id_rsa.pub"
+    key: "https://ssh.megaphonetech.com/{{ lookup('env','USER') }}.pub"
   become: yes
