@@ -13,30 +13,11 @@
     owner: "{{ lookup('env','USER') }}"
     group: "{{ lookup('env','USER') }}"
 
-- name: Install buster-backports
-  apt_repository: repo="deb http://ftp.debian.org/debian buster-backports main"
-  when: ansible_distribution == 'Debian' and ansible_distribution_major_version == '10'
-
-- name: Install Ansible from backport
-  apt:
-    name: ansible
-    state: latest
-    default_release: buster-backports
-    # 86400 seconds = 24 hours
-    cache_valid_time: 86400
-  when: ansible_distribution == 'Debian' and ansible_distribution_major_version == '10'
-
 - name: Install necessary Ansible packages
   apt:
     name: ['ansible', 'pass', 'expect', 'python3-pip', "php-cli", "php-curl", "python3-lxml", "python3-pymysql"]
     # 86400 seconds = 24 hours
     cache_valid_time: 86400
-
-#- name: Install pip packages for Megaphone Ansible
-#  pip:
-#    name: 
-#      - linode_api4
-#      - PyMySql
 
 - name: Install ansible.cfg
   copy: 
